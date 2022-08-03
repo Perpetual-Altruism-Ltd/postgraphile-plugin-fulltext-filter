@@ -87,7 +87,7 @@ module.exports = function PostGraphileFulltextFilterPlugin(builder) {
         const tsQueryString = tsquery(input);
         queryBuilder.__fts_ranks = queryBuilder.__fts_ranks || {};
         queryBuilder.__fts_ranks[fieldName] = [identifier, tsQueryString];
-        return sql.query`${identifier} @@ to_tsquery(${sql.value(tsQueryString)})`;
+        return sql.query`${identifier} @@ to_tsquery('english',${sql.value(tsQueryString)})`;
       },
       {
         allowedFieldTypes: [InputType.name],
@@ -165,7 +165,7 @@ module.exports = function PostGraphileFulltextFilterPlugin(builder) {
               tsQueryString,
             ] = parentQueryBuilder.__fts_ranks[baseFieldName];
             queryBuilder.select(
-              sql.fragment`ts_rank(${identifier}, to_tsquery(${sql.value(tsQueryString)}))`,
+              sql.fragment`ts_rank(${identifier}, to_tsquery('english',${sql.value(tsQueryString)}))`,
               alias,
             );
           },
@@ -271,7 +271,7 @@ module.exports = function PostGraphileFulltextFilterPlugin(builder) {
               identifier,
               tsQueryString,
             ] = queryBuilder.__fts_ranks[fieldName];
-            return sql.fragment`ts_rank(${identifier}, to_tsquery(${sql.value(tsQueryString)}))`;
+            return sql.fragment`ts_rank(${identifier}, to_tsquery('english',${sql.value(tsQueryString)}))`;
           };
 
           memo[ascFieldName] = { // eslint-disable-line no-param-reassign
